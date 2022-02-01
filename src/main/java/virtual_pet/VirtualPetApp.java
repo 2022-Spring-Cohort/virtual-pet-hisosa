@@ -3,89 +3,110 @@ package virtual_pet;
 import java.util.Scanner;
 
 public class VirtualPetApp {
-    private static final VirtualPet mutantLizard = new VirtualPet("Gawd Zilla", "Red", 10, 10, 10, 10);
+    static VirtualPetShelter virtualPetShelter = new VirtualPetShelter();
 
-    public static void main(String[] args) throws InterruptedException {
-        //Interact with a VirtualPet object in this method
-        System.out.println(" ");
-        System.out.println("Welcome to the Virtual Pet Game! Please take good care of your pet!");
-        System.out.println(" ");
-        displayObjective();
+    public static void main(String[] args) {
+        gameIntro();
+        showAllPets();
+        gameLoop();
+    }
 
-        while (variableLimit()) {
-            Scanner scanner1 = new Scanner(System.in);
-            int playerSelect = Integer.parseInt(scanner1.next());
+    public static void gameIntro() {
+        System.out.println("\nWelcome to the Kaiju Pet Shelter App. \nYou are in charge of very dangerous pets." +
+                "\nBe careful not to let your pet's needs exceed \ntheir limits and do not go overboard on their care." +
+                "\n");
+        virtualPetShelter.addInitialPets();
+    }
 
-            if (playerSelect == 1) {
-                mutantLizard.giveFood();
-                System.out.println("nom nom nom\n");
-            } else if (playerSelect == 2) {
-                mutantLizard.giveWater();
-                System.out.println("slurp slurp slurp\n");
-            } else if (playerSelect == 3) {
-                mutantLizard.giveRest();
-                System.out.println("zzz zzz zzz\n");
-            } else if (playerSelect == 4) {
-                mutantLizard.givechill();
-                System.out.println("");
-            } else if (playerSelect == 5) {
-                System.out.println("\nIt's okay to take a break.\nJust keep an eye on your pet!\n");
-            }
-            if (playerSelect == 6) {
-                System.out.println("Thank you for playing the Virtual Pet Game. Goodbye.");
-                break;
-            }
-            if (playerSelect == 9) {
-                mutantLizard.tick9();
-            }
-            if (playerSelect == 0) {
-                printInstructions();
-            }
-            if (playerSelect != 0) {
-                mutantLizard.tick();
-                currentStatus();
-            }
-            System.out.println("What do we do now?");
+    public static void showAllPets() {
+        System.out.println("Here are all the pets currently in the Kaiju Shelter.\n");
+        virtualPetShelter.getAllPets();
+    }
+
+    public static Integer playerChoice() {
+        System.out.println("\nWhat would you like to do? \nPlease choose from the following:\n");
+        System.out.println("1 - Give food to all the pets in shelter."+
+                "\n2 - Give water to all the pets in shelter."+
+                "\n3 - Give all pets in shelter some rest."+
+                "\n4 - Have pets in shelter chill out."+
+                "\n5 - Play with an individual pet from shelter."+
+                "\n6 - Place a new pet in the shelter."+
+                "\n7 - Adopt a pet from the shelter."+
+                "\n8 - View list of all pets in shelter."+
+                "\n9 - Exit the shelter.");
+        System.out.println("0 - Help.");
+
+        Scanner scanner = new Scanner(System.in);
+        int playerChoice = scanner.nextInt();
+        return playerChoice;
+    }
+
+    public static void choiceSelected(Integer playerChoice) {
+        if (playerChoice.equals(1)) {
+            virtualPetShelter.feedAllPets();
+        } else if (playerChoice.equals(2)) {
+            virtualPetShelter.waterAllPets();
+        } else if (playerChoice.equals(3)) {
+            virtualPetShelter.restAllPets();
+        } else if (playerChoice.equals(4)) {
+            virtualPetShelter.chillOutPets();
+        } else if (playerChoice.equals(5)) {
+            System.out.println("Which pet would you like to play with?");
+            String petToPlayWith = whichPetToPlay();
+            virtualPetShelter.playWithOnePet(petToPlayWith);
+            System.out.println("You have selected to play with " + petToPlayWith);
+            virtualPetShelter.unTickAllPets();
+        } else if (playerChoice.equals(6)) {
+            VirtualPet petToBeAdded = inputPetInfo();
+            virtualPetShelter.addPet(petToBeAdded);
+            virtualPetShelter.unTickAllPets();
+        } else if (playerChoice.equals(7)) {
+            System.out.println("Which pet would you like to adopt?");
+            String petToAdopt = whichPetToPlay();
+            virtualPetShelter.removePet(petToAdopt);
+            System.out.println(petToAdopt + " has been adopted!");
+            virtualPetShelter.unTickAllPets();
+        } else if (playerChoice.equals(8)) {
+            virtualPetShelter.unTickAllPets();
+        } else if (playerChoice.equals(9)) {
+            System.out.println("Thank you for playing.\n\nGOODBYE.");
+            System.exit(0);
+        } else if (playerChoice.equals(0)) {
+            gameIntro();
+            virtualPetShelter.unTickAllPets();
         }
-        Thread.sleep(10000);
-        System.out.println("OH NO!! Gawd Zilla is headed to destroy the city!");
-
+        virtualPetShelter.tickAllPets();
     }
 
-    private static void displayObjective() {
-        System.out.println("Objective: Using the commands below, try to keep Gawd Zilla happy, fed and well rested.");
-        System.out.println("If his needs are not met, Gawd Zilla will become very angry destroy the city!!");
-        System.out.println("You can stop the destruction of the city by keeping his needs under their limits! (0-20).");
-        System.out.println("Please be sure not to overdo Gawd Zilla's care...Good Luck!");
-        System.out.println(" ");
-        System.out.println("This is his current status:");
-        currentStatus();
-        System.out.println(" ");
-        printInstructions();
+    public static String whichPetToPlay() {
+        virtualPetShelter.getAllPets();
+        Scanner scanner = new Scanner(System.in);
+        String playerSelection = scanner.nextLine();
+        return playerSelection;
     }
 
-    private static void currentStatus() {
-        System.out.println("Gawd Zilla's current hunger level is " + mutantLizard.getHungry());
-        System.out.println("Gawd Zilla's current thirst level is " + mutantLizard.getThirst());
-        System.out.println("Gawd Zilla's current tired level is " + mutantLizard.getTired());
+    public static VirtualPet inputPetInfo() {
+        System.out.println("What is the name of the new pet?");
+        Scanner scanner = new Scanner(System.in);
+        String newPetName = scanner.nextLine();
 
+        System.out.println("What type of animal is it?");
+        Scanner scanner1 = new Scanner(System.in);
+        String newPetType = scanner.nextLine();
 
+        VirtualPet newPet = new VirtualPet(newPetName, newPetType, 5, 5, 5, 10);
+        return newPet;
     }
 
-    private static void printInstructions() {
-        System.out.println("1 - To give Gawd Zilla some food.");
-        System.out.println("2 - To give Gawd Zilla some water.");
-        System.out.println("3 - To give Gawd Zilla some rest");
-        System.out.println("4 - To watch movies and chill.");
-        System.out.println("5 - To do nothing at this time.");
-        System.out.println("6 - To quit the game.");
-        System.out.println("----------------------------------------");
-        System.out.println("9 - To display pet's current status.");
-        System.out.println("0 - To show the instructions.");
-        System.out.println("  -Please make a selection.-");
-    }
-
-    private static boolean variableLimit() {
-        return mutantLizard.getHungry() < 20 && mutantLizard.getThirst() < 20 && mutantLizard.getTired() < 20 && mutantLizard.getHungry() > 0 && mutantLizard.getThirst() > 0 && mutantLizard.getTired() > 0;
+    public static void gameLoop() {
+        while (!virtualPetShelter.checkPetHealth()) {
+            Integer playerInput = playerChoice();
+            choiceSelected(playerInput);
+            System.out.println(" ");
+            showAllPets();
+        }
+        System.out.println("\n\n\t\t\t\t\t\tOne of your pets has escaped! \n\n\t\t\t\t\t\t\t\t--WARNING--" +
+                "\n\n\t\t\t\t\t\tYOUR  LIFE  IS  IN  DANGER!");
+        virtualPetShelter.dieHuman();
     }
 }

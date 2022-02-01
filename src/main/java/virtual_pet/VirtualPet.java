@@ -3,81 +3,84 @@ package virtual_pet;
 public class VirtualPet {
 
     private String name;
-    private String colorScales;
+    private String type;
+    private int hungry;
     private int thirst;
     private int tired;
-    private int hungry;
     private int chill;
 
-    public VirtualPet(String name, String colorScales, int thirst, int tired, int hungry, int chill) {
+    public VirtualPet(String name, String color, int hungry, int thirst, int tired, int chill) {
         this.name = name;
-        this.colorScales = colorScales;
+        this.type = color;
+        this.hungry = hungry;
         this.thirst = thirst;
         this.tired = tired;
-        this.hungry = hungry;
         this.chill = chill;
     }
-
 
     public String getName() {
         return name;
     }
-
-    public String getColorScales() {
-        return colorScales;
+    public String getType() {
+        return type;
     }
-
-    public int getThirst() {
-        return thirst;
-    }
-
-    public int getTired() {
-        return tired;
-    }
-
     public int getHungry() {
         return hungry;
     }
-
+    public int getThirst() {
+        return thirst;
+    }
+    public int getTired() {
+        return tired;
+    }
     public int getChill() {
         return chill;
     }
 
+    public void giveFood() {
+        hungry -= 4;
+        thirst++;
+        tired++;
+        chill--;
+    }
+    public void giveWater() {
+        thirst -= 3;
+        hungry++;
+        tired++;
+        chill--;
+    }
+    public void giveRest() {
+        tired -= 5;
+        thirst++;
+        hungry++;
+        chill++;
+    }
+    public void giveChill() {
+        tired -= 2;
+        chill += 7;
+        hungry++;
+        thirst++;
+    }
+    public void playWithPet() {
+        chill += 5;
+        tired++;
+        hungry++;
+        thirst++;
+    }
     public void tick() {
         hungry++;
         thirst++;
         tired++;
+        chill--;
     }
-
-    public void tick9() {
+    public void unTick() {
         hungry--;
         thirst--;
         tired--;
+        chill++;
     }
 
-
-    public void giveFood() {
-        hungry = hungry - 4;
-        tired++;
-        thirst++;
+    protected boolean arePetsHealthy() {
+        return getHungry() < 30 && getThirst() < 30 && getTired() < 30 && getChill()>0;
     }
-
-    public void giveRest() {
-        tired = tired - 3;
-        thirst++;
-        hungry++;
-    }
-
-    public void giveWater() {
-        thirst = thirst - 4;
-        tired++;
-        hungry++;
-    }
-
-    public void givechill() {
-        tired = tired - 2;
-        hungry++;
-        thirst++;
-    }
-
 }
